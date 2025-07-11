@@ -1,0 +1,22 @@
+EduAssess 윈도우 설치 방법
+
+1. Node.js 설치
+   - https://nodejs.org 접속
+   - LTS 버전 다운로드 및 설치
+   - 설치 시 모든 기본 옵션 그대로 두기
+
+2. 프로젝트 설치
+   - eduassess-platform.tar.gz 파일을 C:\jhj 폴더에 압축 해제
+   - Windows + R → cmd 입력
+   - cd C:\jhj
+   - npm install
+
+3. 프로그램 실행
+   - npm run dev
+   - 브라우저에서 http://localhost:5000 접속
+
+4. 로그인
+   - 교사: admin / jhj0901
+   - 학생: 성명 + 생년월일 6자리
+
+문제 발생시 관리자에게 연락

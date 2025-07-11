@@ -1,0 +1,26 @@
+윈도우에서 .tar.gz 파일 압축 해제 방법
+
+방법 1: 7-Zip 사용 (무료, 권장)
+1. https://www.7-zip.org 에서 7-Zip 다운로드 및 설치
+2. eduassess-platform.tar.gz 파일을 우클릭
+3. "7-Zip" → "압축 풀기..." 선택
+4. C:\jhj 폴더로 경로 설정 후 압축 해제
+
+방법 2: WinRAR 사용
+1. eduassess-platform.tar.gz 파일을 우클릭
+2. "WinRAR로 압축 풀기" 선택
+3. C:\jhj 폴더로 경로 설정
+
+방법 3: Windows 기본 기능 (Windows 10/11)
+1. eduassess-platform.tar.gz 파일명을 eduassess-platform.tar로 변경
+2. .tar 파일을 우클릭 → "모두 압축 풀기"
+3. C:\jhj 폴더로 경로 설정
+
+압축 해제 완료 후:
+- C:\jhj 폴더에 모든 파일이 있는지 확인
+- 실행.bat 파일을 더블클릭하여 실행
+
+문제 발생 시:
+- 7-Zip 사용을 권장합니다 (가장 안정적)
+- 파일이 완전히 다운로드되었는지 확인
+- 바이러스 백신이 차단하지 않았는지 확인

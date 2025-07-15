@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 
 export function useAccessibility() {
   const [isHighContrast, setIsHighContrast] = useState(false);
-  const [fontSize, setFontSize] = useState("normal");
+  const [fontSize, setFontSize] = useState("medium");
 
   useEffect(() => {
-    // Check localStorage for saved preferences
     const savedContrast = localStorage.getItem("highContrast") === "true";
-    const savedFontSize = localStorage.getItem("fontSize") || "normal";
+    const savedFontSize = localStorage.getItem("fontSize") || "medium";
     
     setIsHighContrast(savedContrast);
     setFontSize(savedFontSize);
     
-    // Apply settings to document
     updateDocumentClass(savedContrast, savedFontSize);
   }, []);
 
@@ -23,19 +21,14 @@ export function useAccessibility() {
       document.documentElement.classList.remove("high-contrast");
     }
     
-    // Remove existing font size classes
     document.documentElement.classList.remove("text-sm", "text-base", "text-lg", "text-xl");
     
-    // Add new font size class
     switch (size) {
       case "small":
         document.documentElement.classList.add("text-sm");
         break;
       case "large":
         document.documentElement.classList.add("text-lg");
-        break;
-      case "extra-large":
-        document.documentElement.classList.add("text-xl");
         break;
       default:
         document.documentElement.classList.add("text-base");
@@ -49,8 +42,7 @@ export function useAccessibility() {
     updateDocumentClass(newValue, fontSize);
   };
 
-  const changeFontSize = (size: string) => {
-    setFontSize(size);
+  const setFontSize = (size: string) => {
     localStorage.setItem("fontSize", size);
     updateDocumentClass(isHighContrast, size);
   };
@@ -59,6 +51,6 @@ export function useAccessibility() {
     isHighContrast,
     fontSize,
     toggleHighContrast,
-    changeFontSize,
+    setFontSize,
   };
 }

@@ -523,10 +523,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "잘못된 아이디 또는 패스워드입니다." });
       }
 
-      res.json({
+           res.json({
         success: true,
-        username: username,
-        role: "teacher",
+        teacherId: teacher.username,
+        name: teacher.username,
         message: "교사 로그인 성공",
       });
     } catch (error) {
@@ -534,67 +534,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/auth/logout", async (req, res) => {
-    try {
-      res.json({ success: true, message: "로그아웃 되었습니다." });
-    } catch (error) {
-      res.status(500).json({ message: "서버 오류가 발생했습니다." });
-    }
+  app.post("/api/auth/logout", (req, res) => {
+    res.json({ success: true, message: "로그아웃 성공" });
   });
 
-  // Analytics endpoint  
-  app.get("/api/analytics", async (req, res) => {
+  // Gamification endpoints
+  app.get('/api/gamification/:userId', async (req, res) => {
     try {
-      const subjects = await storage.getSubjects();
-      const assessments = await storage.getAssessments();
-      const submissions = await storage.getSubmissions();
-      const grades = await storage.getGrades();
-
-      // Calculate subject-wise analytics
-      const analytics = subjects.map(subject => {
-        const subjectAssessments = assessments.filter(a => a.subjectId === subject.id);
-        const subjectSubmissions = submissions.filter(sub => 
-          subjectAssessments.some(a => a.id === sub.assessmentId)
-        );
-
-        const gradedSubmissions = subjectSubmissions.filter(s => s.status === 'graded');
-        
-        let averageScore = 0;
-        let normalizedScores: number[] = [];
-        
-        if (gradedSubmissions.length > 0) {
-          normalizedScores = gradedSubmissions.map(sub => {
-            const maxScore = sub.maxScore || 1;
-            return Math.round(((sub.score || 0) / maxScore) * 100);
-          });
-          
-          averageScore = Math.round(
-            normalizedScores.reduce((sum, score) => sum + score, 0) / normalizedScores.length
-          );
-        }
-
-        const passCount = normalizedScores.filter(score => score >= 60).length;
-        const passRate = gradedSubmissions.length > 0 
-          ? Math.round((passCount / gradedSubmissions.length) * 100)
-          : 0;
-
-        return {
-          subjectId: subject.id,
-          subjectName: subject.name,
-          totalSubmissions: subjectSubmissions.length,
-          gradedSubmissions: gradedSubmissions.length,
-          averageScore,
-          passRate,
-          scores: normalizedScores,
-          maxScore: normalizedScores.length > 0 ? Math.max(...normalizedScores) : 0,
-          minScore: normalizedScores.length > 0 ? Math.min(...normalizedScores) : 0,
-        };
-      });
-
-      res.json(analytics);
+      const userId = parseInt(req.params.userId);
+      
+      // Mock gamification data for now
+      const mockStats = {
+        totalPoints: 1250,
+        level: 3,
+        streak: 7,
+        badges: [
+          { id: '1', name: '첫 시험 완료', description: '첫 번째 시험을 완료했습니다', icon: '🎯', rarity: 'common', earnedAt: new Date() },
+          { id: '2', name: '연속 출석', description: '7일 연속 출석했습니다', icon: '🔥', rarity: 'rare', earnedAt: new Date() }
+        ],
+        achievements: [
+          { id: '1', name: '시험 마스터', description: '10개의 시험을 완료하세요', progress: 3, target: 10, completed: false, points: 100 },
+          { id: '2', name: '완벽한 점수', description: '만점을 받으세요', progress: 1, target: 1, completed: true, points: 50 }
+        ]
+      };
+      
+      res.json(mockStats);
     } catch (error) {
-      console.error("Analytics error:", error);
-      res.status(500).json({ message: "Failed to fetch analytics data" });
+      res.status(500).json({ error: 'Failed to fetch gamification data' });
     }
   });
 

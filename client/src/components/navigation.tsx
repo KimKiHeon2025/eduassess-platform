@@ -21,7 +21,7 @@ import { useAccessibility } from "@/hooks/use-accessibility";
 export default function Navigation() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
-  const { isHighContrast, fontSize, toggleHighContrast, setFontSize } = useAccessibility();
+ const { isHighContrast, fontSize, toggleHighContrast, changeFontSize } = useAccessibility();
 
   const isTeacher = localStorage.getItem("teacherInfo") !== null;
   const isStudent = localStorage.getItem("studentInfo") !== null;
@@ -114,7 +114,7 @@ export default function Navigation() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="small">작게</SelectItem>
-                  <SelectItem value="medium">보통</SelectItem>
+                <Select value={fontSize} onValueChange={changeFontSize}>
                   <SelectItem value="large">크게</SelectItem>
                 </SelectContent>
               </Select>

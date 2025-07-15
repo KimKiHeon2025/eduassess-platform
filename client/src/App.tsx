@@ -75,8 +75,8 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           {isLoggedIn() && <Navigation />}
           <Router />
+          <Toaster />
         </div>
-        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );

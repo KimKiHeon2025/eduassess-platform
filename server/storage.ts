@@ -524,7 +524,7 @@ export class MemStorage implements IStorage {
     return filtered;
   }
 
-    async createGrade(insertGrade: InsertGrade): Promise<Grade> {
+  async createGrade(insertGrade: InsertGrade): Promise<Grade> {
     const id = this.currentGradeID++;
     const grade: Grade = { 
       ...insertGrade, 
@@ -545,17 +545,58 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Initialize with database or memory storage
+// Initialize default data for new database
 async function initializeDatabase() {
-  try {
-    // Test database connection
-    await db.select().from(users).limit(1);
-    console.log("Database connection successful");
-    return new DatabaseStorage();
-  } catch (error) {
-    console.log("Database connection failed, using memory storage:", error);
-    return new MemStorage();
+  // Check if instructor user exists
+  const instructorUser = await db.select().from(users).where(eq(users.username, "instructor"));
+  
+  if (instructorUser.length === 0) {
+    // Create default instructor user
+    const [instructor] = await db
+      .insert(users)
+      .values({
+        username: "instructor",
+        password: "password123",
+        role: "instructor"
+      })
+      .returning();
+
+    // Initialize 100 subjects
+    const subjectList = [
+      // 인문학
+      "국어국문학", "영어영문학", "중어중문학", "일어일문학", "불어불문학", "독어독문학", "러시아학", "사학", "철학", "종교학",
+      // 사회과학
+      "정치외교학", "경제학", "사회학", "심리학", "인류학", "지리학", "사회복지학", "행정학", "신문방송학", "광고홍보학",
+      // 자연과학
+      "수학", "물리학", "화학", "생물학", "지구과학", "천문학", "통계학", "환경과학", "생명과학", "해양학",
+      // 공학
+      "기계공학", "전기전자공학", "컴퓨터공학", "화학공학", "건설환경공학", "산업공학", "재료공학", "원자력공학", "항공우주공학", "생명공학",
+      // 의학 및 보건
+      "의학", "치의학", "한의학", "수의학", "약학", "간호학", "물리치료학", "작업치료학", "방사선학", "임상병리학",
+      // 농업 및 생명
+      "농학", "원예학", "축산학", "산림학", "수산학", "식품공학", "농업경제학", "농업교육학", "바이오시스템공학", "농업생명과학",
+      // 예술 및 체육
+      "음악학", "미술학", "연극영화학", "무용학", "디자인학", "체육학", "태권도학", "스포츠의학", "레저스포츠학", "골프학",
+      // 교육학
+      "교육학", "유아교육학", "초등교육학", "특수교육학", "교육심리학", "교육과정학", "교육행정학", "평생교육학", "교육공학", "상담학",
+      // 경영 및 상경
+      "경영학", "회계학", "마케팅학", "재무학", "인사조직학", "생산관리학", "국제경영학", "벤처경영학", "호텔경영학", "관광경영학",
+      // 법학 및 공공정책
+      "법학", "국제법학", "공법학", "사법학", "행정법학", "국제관계학", "외교학", "정치학", "공공정책학", "도시계획학"
+    ];
+
+    const subjectInserts = subjectList.map((name, index) => ({
+      name,
+      code: `SUB${String(index + 1).padStart(3, '0')}`,
+      description: `${name} 과목입니다.`,
+      createdBy: instructor.id,
+    }));
+
+    await db.insert(subjects).values(subjectInserts);
   }
 }
 
 export const storage = new DatabaseStorage();
+
+// Initialize database on startup
+initializeDatabase().catch(console.error);

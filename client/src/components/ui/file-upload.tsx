@@ -9,7 +9,7 @@ interface FileUploadProps {
   currentImageUrl?: string;
   className?: string;
   accept?: string;
-  maxSize?: number; // in MB
+  maxSize?: number;
 }
 
 export default function FileUpload({
@@ -58,61 +58,74 @@ export default function FileUpload({
     }
   };
 
-  if (currentImageUrl) {
-    return (
-      <div className={cn("relative", className)}>
-        <img
-          src={currentImageUrl}
-          alt="Uploaded"
-          className="w-full h-32 object-cover rounded-lg border border-gray-300"
-        />
-        {onFileRemove && (
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            className="absolute top-2 right-2"
-            onClick={onFileRemove}
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("space-y-2", className)}>
       <div
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
-          isDragOver 
-            ? "border-primary-500 bg-primary-50" 
-            : "border-gray-300 hover:border-gray-400"
+          "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
+          isDragOver
+            ? "border-primary bg-primary/5"
+            : "border-gray-300 hover:border-gray-400",
+          currentImageUrl && "border-green-300 bg-green-50"
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-        <div className="text-sm text-gray-600">
-          <span className="font-medium text-primary-600 hover:text-primary-500">
-            Upload a file
-          </span>{" "}
-          or drag and drop
-        </div>
-        <p className="text-xs text-gray-500 mt-1">
-          PNG, JPG, GIF up to {maxSize}MB
-        </p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          onChange={handleInputChange}
+          className="hidden"
+        />
+        
+        {currentImageUrl ? (
+          <div className="space-y-2">
+            <img
+              src={currentImageUrl}
+              alt="Preview"
+              className="max-w-full max-h-32 mx-auto rounded"
+            />
+            <div className="flex justify-center space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-4 h-4 mr-1" />
+                Change
+              </Button>
+              {onFileRemove && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onFileRemove();
+                  }}
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <ImageIcon className="w-8 h-8 mx-auto text-gray-400" />
+            <div className="text-sm text-gray-600">
+              Click or drag and drop to upload an image
+            </div>
+            <div className="text-xs text-gray-400">
+              Maximum file size: {maxSize}MB
+            </div>
+          </div>
+        )}
       </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={accept}
-        onChange={handleInputChange}
-        className="hidden"
-      />
     </div>
   );
 }
